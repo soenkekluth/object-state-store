@@ -1,0 +1,20 @@
+{
+  "env": {
+    "production": {
+      "presets": [
+        "es2015-tree-shaking"
+      ],
+      "plugins": [
+        ["transform-es2015-modules-commonjs", { "loose": true }]
+      ]
+    },
+    "development": {
+      "presets": [
+        "es2015-tree-shaking"
+      ],
+      "plugins": [
+        ["transform-es2015-modules-commonjs", { "loose": true }]
+      ]
+    }
+  }
+}

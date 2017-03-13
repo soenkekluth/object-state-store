@@ -1,0 +1,49 @@
+{
+  "name": "object-state-store",
+  "version": "0.8.0",
+  "description": "observable stateful object store Edit",
+  "module": "index.js",
+  "jsnext:main": "index.js",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "ava",
+    "test2": "xo && ava",
+    "build:lib": "cross-env NODE_ENV=production babel index.js -o lib/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/soenkekluth/object-state-store.git"
+  },
+  "keywords": [
+    "object",
+    "redux",
+    "store",
+    "state",
+    "observable",
+    "key",
+    "value",
+    "map",
+    "event"
+  ],
+  "author": "Sönke Kluth <soenke.kluth@gmail.com> (http://soenkekluth.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/soenkekluth/object-state-store/issues"
+  },
+  "homepage": "https://github.com/soenkekluth/object-state-store#readme",
+  "dependencies": {
+    "babel-plugin-transform-es2015-modules-commonjs": "6.24.0",
+    "eventdispatcher": "^2.5.1",
+    "is-plain-obj": "1.1.0",
+    "object-assign": "^4.1.1",
+    "object-path": "^0.11.4"
+  },
+  "devDependencies": {
+    "ava": "0.18.2",
+    "babel-cli": "6.24.0",
+    "babel-core": "6.24.0",
+    "babel-preset-es2015-tree-shaking": "1.0.1",
+    "cross-env": "3.2.3",
+    "xo": "0.17.1"
+  }
+}
