@@ -22,7 +22,7 @@ export class Store {
     const props = Object.keys(nextState);
     for (let i = 0, l = props.length; i < l; i++) {
       this.dispatcher.trigger(props[i], {
-        prop: props[i],
+        key: props[i],
         value: this.get(props[i]),
         state: this.getState(),
       });
@@ -86,7 +86,7 @@ export class Store {
 const store = (initialState = {}) => {
   const newStore = new Store(initialState);
   return {
-    get: newStore.getState.bind(newStore),
+    getState: newStore.getState.bind(newStore),
     getPrevState: newStore.getPrevState.bind(newStore),
     subscribe: newStore.subscribe.bind(newStore),
     get: newStore.get.bind(newStore),
