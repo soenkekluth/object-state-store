@@ -1,7 +1,7 @@
 {
   "name": "object-state-store",
-  "version": "0.8.0",
-  "description": "observable stateful object store Edit",
+  "version": "0.8.1",
+  "description": "observable stateful object store",
   "module": "index.js",
   "jsnext:main": "index.js",
   "main": "lib/index.js",
