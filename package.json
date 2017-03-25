@@ -1,19 +1,27 @@
 {
   "name": "object-state-store",
-  "version": "0.9.0",
+  "version": "1.0.0",
   "description": "observable stateful object store",
-  "module": "index.js",
-  "jsnext:main": "index.js",
+  "module": "es/index.js",
+  "jsnext:main": "es/index.js",
   "main": "lib/index.js",
   "scripts": {
     "test": "ava",
-    "test2": "xo && ava",
-    "build:lib": "cross-env NODE_ENV=production babel index.js -o lib/index.js"
+    "build": "yarn build:lib && yarn build:es",
+    "build:dist": "cross-env BABEL_ENV=lib babel src -d lib",
+    "build:lib": "cross-env BABEL_ENV=lib babel src -d lib",
+    "build:es": "cross-env BABEL_ENV=es babel src -d es"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/soenkekluth/object-state-store.git"
   },
+
+  "files": [
+    "lib",
+    "src",
+    "es"
+  ],
   "keywords": [
     "deep",
     "path",
@@ -35,7 +43,6 @@
   },
   "homepage": "https://github.com/soenkekluth/object-state-store#readme",
   "dependencies": {
-    "babel-plugin-transform-es2015-modules-commonjs": "6.24.0",
     "eventdispatcher": "^2.5.1",
     "is-plain-obj": "1.1.0",
     "object-assign": "^4.1.1",
@@ -45,8 +52,12 @@
     "ava": "0.18.2",
     "babel-cli": "6.24.0",
     "babel-core": "6.24.0",
+    "babel-plugin-add-module-exports": "0.2.1",
+    "babel-plugin-transform-es2015-modules-commonjs": "6.24.0",
+    "babel-plugin-transform-runtime": "6.23.0",
     "babel-preset-es2015-tree-shaking": "1.0.1",
-    "cross-env": "3.2.3",
-    "xo": "0.17.1"
+    "bablyfill": "1.0.3",
+    "cross-env": "3.2.4",
+    "xo": "0.18.0"
   }
 }
