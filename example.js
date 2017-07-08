@@ -1,5 +1,5 @@
-import store from './src/index';
-import { objToDot } from './src/utils';
+var store = require('./dist/ost').store;
+var {objToDot} = require('./lib/utils');
 
 const initialState = {
 
@@ -14,24 +14,24 @@ const initialState = {
 
 };
 
-const state = store(initialState);
+const mainStore = store(initialState);
 
-state.subscribe('update', (e)=>{
+mainStore.subscribe('update', (e)=>{
   console.log('update', e.payload);
 })
 
 console.log('GET');
-console.log(state.get('hans'));
-console.log(state.get('nested'));
-console.log(state.get('nested.seppel'));
-console.log(state.get('nested.fred.name'));
+console.log(mainStore.get('hans'));
+console.log(mainStore.get('nested'));
+console.log(mainStore.get('nested.seppel'));
+console.log(mainStore.get('nested.fred.name'));
 console.log('SET');
-state.set('nested.fred.name', 'HASS');
-console.log(state.get('nested.fred.name'));
+mainStore.set('nested.fred.name', 'HASS');
+console.log(mainStore.get('nested.fred.name'));
 
 console.log('####################################');
 // console.log(objToDot(initialState));
-console.log(state.toJSON());
+console.log(mainStore.toJSON());
 
 const newStore = store({
   user: {
@@ -59,4 +59,27 @@ newStore.set({
 newStore.set('user.surname', 'panic');
 
 
-console.log(newStore.toJSON());
+
+
+
+const aStore = store({
+  name: 'lalql',
+  active: false,
+  details: {
+    some: 'thing'
+  }
+});
+
+
+mainStore.set('aStore', aStore);
+
+
+aStore.subscribe('name', (e) => {
+  console.log('hiiiier');
+ console.log(e);
+});
+
+mainStore.set('aStore.name', 'mystore');
+// newStore.set('name', 'mystore');
+
+// console.log(newStore.toJSON());

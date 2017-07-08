@@ -1,31 +1,3 @@
-# See http://help.github.com/ignore-files/ for more about ignoring files.
-
-# dependencies
-node_modules
-
-# testing
-coverage
-
-# production
-/build
-/build_static
-/static
-/release
-# project
-/material
-TODO.md
-
-# misc
-.DS_Store
-.env
-.tern-port
-*.sublime-project
-*.sublime-workspace
-npm-debug.log
-.idea
-TODO
-yarn-error.log
-/lib
-coverage
-/es
-/material
+/node_modules
+/dist
+*.map

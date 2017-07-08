@@ -1,7 +1,12 @@
-import { set } from 'object-path';
+import objectPath from 'object-path';
 import isPlainObj from 'is-plain-obj';
 
+const {ensureExists} = objectPath;
+
 export const objToDot = (obj) => {
+  if(!isPlainObj(obj) || typeof obj === 'string'){
+    return obj;
+  }
 
   const objToDotNotation = (obj, result = {}, dotPathArr = []) => {
     const keys = Object.keys(obj);
@@ -17,11 +22,14 @@ export const objToDot = (obj) => {
   };
   return objToDotNotation(obj);
 
-}
+};
 
 
-export const dotToObj = (path, value) => {
+export const dotToObj = (path, value = 'DEFAULT') => {
+  if(!isPlainObj(path)){
+    return path;
+  }
   const obj = {};
-  set(obj, path, value);
+  ensureExists(obj, path, value);
   return obj;
-}
+};

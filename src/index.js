@@ -1,31 +1,30 @@
-import EventDispatcher from 'eventdispatcher';
+import MicroDispatch from 'microdispatch';
 import assign from 'object-assign';
 import isPlainObj from 'is-plain-obj';
-import {objToDot} from './utils';
-import {get, set, insert, push, del, has } from 'object-path';
+import {objToDot, dotToObj} from './utils';
+import objectPath from 'object-path';
 
-
+const {get, set, insert, push, del, has, empty } = objectPath;
 
 export class Store {
 
   constructor(initialState = {}) {
-    this.dispatcher = new EventDispatcher();
+    this.emitter = new MicroDispatch(this);
     this.state = assign({}, initialState);
     this.stateClone = assign({}, this.state);
   }
 
-  __update(nextState, partial, pathValue) {
+  setState(nextState, partial, pathValue) {
     this.prevState = assign({}, this.state);
     this.state = assign({}, nextState);
     this.stateClone = assign({}, this.state);
-
-    this.dispatcher.trigger('update', { state: this.getState(), payload:partial });
+    this.emitter.emit('update', { state: this.getState(), payload:partial });
 
     if(pathValue){
       const paths = Object.keys(pathValue);
       for (let i = 0, l = paths.length; i < l; i++) {
-        // console.log('trigger', paths[i], pathValue[paths[i]]);
-        this.dispatcher.trigger(paths[i], {
+        // console.log('emit', paths[i], pathValue[paths[i]]);
+        this.emitter.emit(paths[i], {
           key: paths[i],
           value: pathValue[paths[i]],
           state: this.getState(),
@@ -44,12 +43,47 @@ export class Store {
   }
 
   subscribe(key, handler) {
-    this.dispatcher.on(key, handler);
+    this.emitter.on(key, handler);
+    return () => this.unsubscribe(key, handler);
+  }
+
+  unsubscribe(key, handler){
+    this.emitter.off(key, handler);
   }
 
   // ensureExists(path, value) {
   //   return this.set(path, value, true);
   // }
+
+  empty(key) {
+    const state = this.getState();
+    let path = objToDot(key);
+    empty(state, path);
+    this.setState(state, get(state, path), {path:null });
+    // this.setState(state);
+    // this.emitter.emit(path, { state: this.getState(), payload:this.get(path) });
+  }
+
+  // ensureExists(key, value) {
+
+  // }
+
+  push(key, ...values){
+    const state = this.getState();
+    let path = objToDot(key);
+    push(state, path, ...values);
+    this.setState(state, get(state, path), {path:values });
+    // this.emitter.emit(path, { state: this.getState(), payload:this.get(path) });
+  }
+
+  insert(key, value, index= 0) {
+    const state = this.getState();
+    let path = objToDot(key);
+    insert(state, path, value, index);
+    this.setState(state, get(state, path), {path:value });
+
+    // this.emitter.emit(path, { state: this.getState(), payload:this.get(path) });
+  }
 
   get(key, fallback = null) {
     return get(this.getState(), key, fallback);
@@ -71,27 +105,26 @@ export class Store {
         pathValue[keys[i]] = paths[keys[i]];
         set(state, keys[i], paths[keys[i]]);
       }
-
       partial = assign({}, args[0]);
-
     }
 
-    this.__update(state, partial, pathValue);
+    this.setState(state, partial, pathValue);
   }
 
   has(key) {
-    return has(this.getState(), key);
+    return has(this.state, key);
   }
 
   delete(key) {
-    const partial = get(this.getState(), key);
-    del(this.getState(), key);
-    this.__update(this.getState(), partial);
-    this.dispatcher.trigger(key, { state: this.getState(), payload:null });
+    const state = this.getState();
+    const partial = get(state, key);
+    del(state, key);
+    this.setState(state, partial);
+    this.emitter.emit(key, { state: this.getState(), payload:null });
   }
 
   clone() {
-    return state(this.cloneState());
+    return new Store(this.cloneState());
   }
 
   cloneState() {
@@ -113,10 +146,14 @@ const store = (initialState = {}) => {
     getState: newStore.getState.bind(newStore),
     getPrevState: newStore.getPrevState.bind(newStore),
     subscribe: newStore.subscribe.bind(newStore),
+    unsubscribe: newStore.unsubscribe.bind(newStore),
     get: newStore.get.bind(newStore),
     set: newStore.set.bind(newStore),
     has: newStore.has.bind(newStore),
     delete: newStore.delete.bind(newStore),
+    empty: newStore.empty.bind(newStore),
+    push:newStore.push.bind(newStore),
+    insert:newStore.insert.bind(newStore),
     clone: newStore.clone.bind(newStore),
     size: newStore.size,
     toJSON: newStore.toJSON.bind(newStore),
@@ -138,6 +175,6 @@ export default store;
 // export const select = (keyValue) => {
 //   const props = Object.keys(keyValue);
 //   for (let i = 0, l = props.length; i < l; i++) {
-//     this.trigger(props[i], { prop: props[i], value: get(stateClone, props[i]), state: stateClone });
+//     this.emit(props[i], { prop: props[i], value: get(stateClone, props[i]), state: stateClone });
 //   }
 // }
