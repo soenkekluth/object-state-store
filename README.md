@@ -2,6 +2,8 @@
 
 # object-state-store
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/soenkekluth/object-state-store.svg)](https://greenkeeper.io/)
+
 > observable stateful object store
 
 ## Usage
