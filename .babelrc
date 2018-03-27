@@ -1,9 +1,18 @@
 {
   "presets": [
     [
-      "es2015", {
+      "env",
+      {
         "modules": false,
-        "loose": true
+        "useBuiltIns": true,
+        "loose": true,
+        "targets": {
+          "node": "6",
+          "browsers": [
+            "last 3 versions",
+            "ie >= 9"
+          ]
+        }
       }
     ]
   ]

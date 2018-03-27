@@ -1,15 +1,16 @@
-import MicroDispatch from 'microdispatch';
+import Emitter from 'micromitter';
 import assign from 'object-assign';
-import isPlainObj from 'is-plain-obj';
-import {objToDot, dotToObj} from './utils';
 import objectPath from 'object-path';
+import isPlainObj from 'is-plain-obj';
+import { objToDot, dotToObj } from './utils';
 
-const {get, set, insert, push, del, has, empty } = objectPath;
+// immutable-store-observer
+
+const { get, set, insert, push, del, has, empty } = objectPath;
 
 export class Store {
-
   constructor(initialState = {}) {
-    this.emitter = new MicroDispatch(this);
+    this.emitter = new Emitter(this);
     this.state = assign({}, initialState);
     this.stateClone = assign({}, this.state);
   }
@@ -18,9 +19,9 @@ export class Store {
     this.prevState = assign({}, this.state);
     this.state = assign({}, nextState);
     this.stateClone = assign({}, this.state);
-    this.emitter.emit('update', { state: this.getState(), payload:partial });
+    this.emitter.emit('update', { state: this.getState(), payload: partial });
 
-    if(pathValue){
+    if (pathValue) {
       const paths = Object.keys(pathValue);
       for (let i = 0, l = paths.length; i < l; i++) {
         // console.log('emit', paths[i], pathValue[paths[i]]);
@@ -47,7 +48,7 @@ export class Store {
     return () => this.unsubscribe(key, handler);
   }
 
-  unsubscribe(key, handler){
+  unsubscribe(key, handler) {
     this.emitter.off(key, handler);
   }
 
@@ -57,9 +58,9 @@ export class Store {
 
   empty(key) {
     const state = this.getState();
-    let path = objToDot(key);
+    const path = objToDot(key);
     empty(state, path);
-    this.setState(state, get(state, path), {path:null });
+    this.setState(state, get(state, path), { path: null });
     // this.setState(state);
     // this.emitter.emit(path, { state: this.getState(), payload:this.get(path) });
   }
@@ -68,19 +69,19 @@ export class Store {
 
   // }
 
-  push(key, ...values){
+  push(key, ...values) {
     const state = this.getState();
-    let path = objToDot(key);
+    const path = objToDot(key);
     push(state, path, ...values);
-    this.setState(state, get(state, path), {path:values });
+    this.setState(state, get(state, path), { path: values });
     // this.emitter.emit(path, { state: this.getState(), payload:this.get(path) });
   }
 
-  insert(key, value, index= 0) {
+  insert(key, value, index = 0) {
     const state = this.getState();
-    let path = objToDot(key);
+    const path = objToDot(key);
     insert(state, path, value, index);
-    this.setState(state, get(state, path), {path:value });
+    this.setState(state, get(state, path), { path: value });
 
     // this.emitter.emit(path, { state: this.getState(), payload:this.get(path) });
   }
@@ -90,18 +91,17 @@ export class Store {
   }
 
   set(...args) {
-
     const state = this.getState();
     let partial = {};
-    let pathValue = {};
-    if(args.length === 2 && (typeof args[0] === 'string')){
+    const pathValue = {};
+    if (args.length === 2 && typeof args[0] === 'string') {
       set(state, args[0], args[1]);
       set(partial, args[0], args[1]);
       pathValue[args[0]] = args[1];
-    }else if(args.length === 1 && isPlainObj(args[0])){
+    } else if (args.length === 1 && isPlainObj(args[0])) {
       const paths = objToDot(args[0]);
       const keys = Object.keys(paths);
-      for(let i = 0, l = keys.length; i < l; i++) {
+      for (let i = 0, l = keys.length; i < l; i++) {
         pathValue[keys[i]] = paths[keys[i]];
         set(state, keys[i], paths[keys[i]]);
       }
@@ -120,7 +120,7 @@ export class Store {
     const partial = get(state, key);
     del(state, key);
     this.setState(state, partial);
-    this.emitter.emit(key, { state: this.getState(), payload:null });
+    this.emitter.emit(key, { state: this.getState(), payload: null });
   }
 
   clone() {
@@ -152,8 +152,8 @@ const store = (initialState = {}) => {
     has: newStore.has.bind(newStore),
     delete: newStore.delete.bind(newStore),
     empty: newStore.empty.bind(newStore),
-    push:newStore.push.bind(newStore),
-    insert:newStore.insert.bind(newStore),
+    push: newStore.push.bind(newStore),
+    insert: newStore.insert.bind(newStore),
     clone: newStore.clone.bind(newStore),
     size: newStore.size,
     toJSON: newStore.toJSON.bind(newStore),
